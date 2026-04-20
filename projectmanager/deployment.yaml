@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: projectmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: projectmanager
+  template:
+    metadata:
+      labels:
+        app: projectmanager
+    spec:
+      containers:
+        - name: projectmanager
+          image: projectmanager
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
