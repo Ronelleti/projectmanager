@@ -13,7 +13,7 @@ spec:
         app: projectmanager
     spec:
       containers:
-        - name: projectmanager
-          image: <your-docker-username>/projectmanager:latest
+        - name: projectmanager:latest
+          image: projectmanager:latest
           ports:
             - containerPort: 8080
