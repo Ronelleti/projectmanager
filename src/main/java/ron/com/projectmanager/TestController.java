@@ -7,20 +7,34 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/tasks")
 public class TestController {
 
     private List<Task> tasks = new ArrayList<>();
     private int currentId = 1;
 
+    // ✅ ROOT endpoint (so "/" works)
+    @GetMapping("/")
+    public String home() {
+        return "Project Manager API is running 🚀";
+    }
+
     // GET all tasks
-    @GetMapping
+    @GetMapping("/tasks")
     public List<Task> getTasks() {
         return tasks;
     }
 
+    // GET single task
+    @GetMapping("/tasks/{id}")
+    public Task getTask(@PathVariable int id) {
+        return tasks.stream()
+                .filter(t -> t.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+    }
+
     // CREATE task
-    @PostMapping
+    @PostMapping("/tasks")
     public Task addTask(@RequestBody Task task) {
         task.setId(currentId++);
         tasks.add(task);
@@ -28,57 +42,50 @@ public class TestController {
     }
 
     // DELETE task
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/tasks/{id}")
     public String deleteTask(@PathVariable int id) {
-        tasks.removeIf(t -> t.getId() == id);
+        boolean removed = tasks.removeIf(t -> t.getId() == id);
+
+        if (!removed) {
+            throw new RuntimeException("Task not found");
+        }
+
         return "Task deleted";
     }
 
     // UPDATE task name
-    @PutMapping("/{id}")
+    @PutMapping("/tasks/{id}")
     public Task updateTask(@PathVariable int id, @RequestBody Task updatedTask) {
-        Optional<Task> taskOpt = tasks.stream()
+        Task task = tasks.stream()
                 .filter(t -> t.getId() == id)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        if (taskOpt.isPresent()) {
-            Task task = taskOpt.get();
-            task.setName(updatedTask.getName());
-            return task;
-        }
-
-        throw new RuntimeException("Task not found");
+        task.setName(updatedTask.getName());
+        return task;
     }
 
     // ASSIGN task
-    @PostMapping("/{id}/assign")
+    @PostMapping("/tasks/{id}/assign")
     public Task assignTask(@PathVariable int id, @RequestBody Task updatedTask) {
-        Optional<Task> taskOpt = tasks.stream()
+        Task task = tasks.stream()
                 .filter(t -> t.getId() == id)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        if (taskOpt.isPresent()) {
-            Task task = taskOpt.get();
-            task.setAssignedTo(updatedTask.getAssignedTo());
-            return task;
-        }
-
-        throw new RuntimeException("Task not found");
+        task.setAssignedTo(updatedTask.getAssignedTo());
+        return task;
     }
 
     // MARK COMPLETE
-    @PostMapping("/{id}/complete")
+    @PostMapping("/tasks/{id}/complete")
     public Task completeTask(@PathVariable int id) {
-        Optional<Task> taskOpt = tasks.stream()
+        Task task = tasks.stream()
                 .filter(t -> t.getId() == id)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        if (taskOpt.isPresent()) {
-            Task task = taskOpt.get();
-            task.setCompleted(true);
-            return task;
-        }
-
-        throw new RuntimeException("Task not found");
+        task.setCompleted(true);
+        return task;
     }
 }
