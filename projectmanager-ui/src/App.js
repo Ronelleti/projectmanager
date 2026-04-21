@@ -4,9 +4,8 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
 
-  const API = "http://127.0.0.1:56540"; // your backend URL
+  const API = "http://127.0.0.1:56540";
 
-  // Fetch tasks
   const fetchTasks = async () => {
     const res = await fetch(`${API}/tasks`);
     const data = await res.json();
@@ -17,7 +16,6 @@ function App() {
     fetchTasks();
   }, []);
 
-  // Add task
   const addTask = async () => {
     if (!newTask) return;
 
@@ -33,10 +31,32 @@ function App() {
     fetchTasks();
   };
 
-  // Delete task
   const deleteTask = async (id) => {
     await fetch(`${API}/tasks/${id}`, {
       method: "DELETE",
+    });
+
+    fetchTasks();
+  };
+
+  const completeTask = async (id) => {
+    await fetch(`${API}/tasks/${id}/complete`, {
+      method: "POST",
+    });
+
+    fetchTasks();
+  };
+
+  const assignTask = async (id) => {
+    const user = prompt("Assign to:");
+    if (!user) return;
+
+    await fetch(`${API}/tasks/${id}/assign`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ assignedTo: user }),
     });
 
     fetchTasks();
@@ -56,7 +76,14 @@ function App() {
         <ul>
           {tasks.map((task) => (
               <li key={task.id}>
-                {task.name}
+                <b>{task.name}</b>
+                {task.completed && " ✅"}
+                {task.assignedTo && ` (👤 ${task.assignedTo})`}
+
+                <br />
+
+                <button onClick={() => completeTask(task.id)}>Complete</button>
+                <button onClick={() => assignTask(task.id)}>Assign</button>
                 <button onClick={() => deleteTask(task.id)}>❌</button>
               </li>
           ))}
