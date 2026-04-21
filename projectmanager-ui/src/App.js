@@ -4,7 +4,7 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
 
-  const API = "http://127.0.0.1:56540";
+  const API = "http://ron.project.devops";
 
   const fetchTasks = async () => {
     const res = await fetch(`${API}/tasks`);
