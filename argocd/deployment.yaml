@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: projectmanager
-          image: ronn4/projectmanager:latest
+          image: ronn4/projectmanager:v2
           ports:
             - containerPort: 8080
 ---
