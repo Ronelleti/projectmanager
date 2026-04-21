@@ -24,6 +24,12 @@ public class TestController {
         return tasks;
     }
 
+    //Debug!!!
+    @PostMapping("/debug")
+    public String debug(@RequestBody String body) {
+        return body;
+    }
+
     // GET single task
     @GetMapping("/tasks/{id}")
     public Task getTask(@PathVariable int id) {
