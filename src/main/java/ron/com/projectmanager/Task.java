@@ -1,5 +1,8 @@
 package ron.com.projectmanager;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Task {
 
     private int id;
