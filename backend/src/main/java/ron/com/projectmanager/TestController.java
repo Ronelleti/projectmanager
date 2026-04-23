@@ -2,20 +2,21 @@ package ron.com.projectmanager;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class TestController {
 
-    private List<Task> tasks = new ArrayList<>();
-    private int currentId = 1;
+    private final TaskRepository taskRepository;
 
-    // ✅ ROOT endpoint (so "/" works)
+    // 🔥 Inject repository
+    public TestController(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
+
+    // ROOT
     @GetMapping
     public String home() {
         return "Project Manager API is running 🚀";
@@ -24,77 +25,56 @@ public class TestController {
     // GET all tasks
     @GetMapping("/tasks")
     public List<Task> getTasks() {
-        return tasks;
+        return taskRepository.findAll();
     }
 
-    //Debug!!!
-    @PostMapping("/debug")
-    public String debug(@RequestBody String body) {
-        return body;
-    }
-
-    // GET single task
+    // GET one task
     @GetMapping("/tasks/{id}")
     public Task getTask(@PathVariable int id) {
-        return tasks.stream()
-                .filter(t -> t.getId() == id)
-                .findFirst()
+        return taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
     }
 
-    // CREATE task
+    // CREATE
     @PostMapping("/tasks")
     public Task addTask(@RequestBody Task task) {
-        task.setId(currentId++);
-        tasks.add(task);
-        return task;
+        return taskRepository.save(task);
     }
 
-    // DELETE task
+    // DELETE
     @DeleteMapping("/tasks/{id}")
     public String deleteTask(@PathVariable int id) {
-        boolean removed = tasks.removeIf(t -> t.getId() == id);
-
-        if (!removed) {
-            throw new RuntimeException("Task not found");
-        }
-
+        taskRepository.deleteById(id);
         return "Task deleted";
     }
 
-    // UPDATE task name
+    // UPDATE
     @PutMapping("/tasks/{id}")
     public Task updateTask(@PathVariable int id, @RequestBody Task updatedTask) {
-        Task task = tasks.stream()
-                .filter(t -> t.getId() == id)
-                .findFirst()
+        Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
         task.setName(updatedTask.getName());
-        return task;
+        return taskRepository.save(task);
     }
 
-    // ASSIGN task
+    // ASSIGN
     @PostMapping("/tasks/{id}/assign")
     public Task assignTask(@PathVariable int id, @RequestBody Task updatedTask) {
-        Task task = tasks.stream()
-                .filter(t -> t.getId() == id)
-                .findFirst()
+        Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
         task.setAssignedTo(updatedTask.getAssignedTo());
-        return task;
+        return taskRepository.save(task);
     }
 
-    // MARK COMPLETE
+    // COMPLETE
     @PostMapping("/tasks/{id}/complete")
     public Task completeTask(@PathVariable int id) {
-        Task task = tasks.stream()
-                .filter(t -> t.getId() == id)
-                .findFirst()
+        Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
         task.setCompleted(true);
-        return task;
+        return taskRepository.save(task);
     }
 }
