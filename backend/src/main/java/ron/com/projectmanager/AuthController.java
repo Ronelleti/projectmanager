@@ -1,6 +1,7 @@
 package ron.com.projectmanager;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Map;
 
@@ -9,18 +10,30 @@ import java.util.Map;
 @CrossOrigin("*")
 public class AuthController {
 
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthController(UserRepository userRepository,
+                          PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Map<String, String> request) {
 
         String username = request.get("username");
         String password = request.get("password");
 
-        // 🔥 simple hardcoded (later DB)
-        if ("admin".equals(username) && "admin".equals(password)) {
-            String token = JwtUtil.generateToken(username);
-            return Map.of("token", token);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid password");
         }
 
-        throw new RuntimeException("Invalid credentials");
+        String token = JwtUtil.generateToken(username, user.getRole().name());
+
+        return Map.of("token", token);
     }
 }

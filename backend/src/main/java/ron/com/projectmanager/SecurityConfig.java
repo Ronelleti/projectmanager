@@ -24,4 +24,14 @@ public class SecurityConfig {
                 )
                 .build();
     }
+
+    // ✅ ADD THIS
+    @Bean
+    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+
+
+    }
+
+
 }
