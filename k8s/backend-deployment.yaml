@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ronn4/projectmanager:b9493cc364015a508f2791125578a88a4dbef015
+          image: ronn4/projectmanager:930e78e54f3ae6d41c1dab1950464539c8ea9d23
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
