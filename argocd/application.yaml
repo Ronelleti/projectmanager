@@ -6,9 +6,9 @@ metadata:
 spec:
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: frontend   # 🔥 FIXED
   source:
-    repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO.git
+    repoURL: https://github.com/Ronelleti/projectmanager.git   # 🔥 FIXED
     targetRevision: HEAD
     path: k8s
   syncPolicy:
