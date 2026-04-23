@@ -5,11 +5,10 @@ import jakarta.servlet.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import java.util.List;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -21,8 +20,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String path = req.getRequestURI();
 
-        // ✅ ALLOW these without JWT
-        if (path.startsWith("/actuator") || path.startsWith("/api/auth/login")) {
+        // 🔥 DEBUG (optional - you can remove later)
+        System.out.println("Request path: " + path);
+
+        // ✅ ALLOW ALL AUTH + ACTUATOR ENDPOINTS
+        if (path.startsWith("/api/auth") || path.startsWith("/actuator")) {
             chain.doFilter(req, res);
             return;
         }
@@ -37,15 +39,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
         try {
             String token = header.substring(7);
-            String username = JwtUtil.validateToken(token);
 
+            String username = JwtUtil.validateToken(token);
             String role = JwtUtil.extractRole(token);
 
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(
                             username,
                             null,
-                            List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role))
+                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
                     );
 
             SecurityContextHolder.getContext().setAuthentication(auth);

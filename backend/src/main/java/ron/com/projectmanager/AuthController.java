@@ -26,14 +26,44 @@ public class AuthController {
         String password = request.get("password");
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new RuntimeException("Invalid credentials");
         }
 
         String token = JwtUtil.generateToken(username, user.getRole().name());
 
-        return Map.of("token", token);
+        return Map.of(
+        "token", token,
+        "role", user.getRole().name()
+        );
+    }
+
+
+    @PostMapping("/register")
+    public Map<String, String> register(@RequestBody Map<String, String> request) {
+
+        String username = request.get("username");
+        String password = request.get("password");
+
+        if (username == null || password == null || username.isBlank() || password.isBlank()) {
+            return Map.of("error", "Username and password are required");
+        }
+
+        if (userRepository.findByUsername(username).isPresent()) {
+            return Map.of("error", "User already exists");
+        }
+
+        String hashedPassword = passwordEncoder.encode(password);
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(hashedPassword);
+        user.setRole(Role.USER);
+
+        userRepository.save(user);
+
+        return Map.of("message", "User registered successfully");
     }
 }

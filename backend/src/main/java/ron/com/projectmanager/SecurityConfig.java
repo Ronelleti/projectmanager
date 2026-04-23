@@ -13,7 +13,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // ✅ NEW WAY
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/login",
+                                "/api/auth/**",
                                 "/actuator/**"   // 🔥 allow actuator
                         ).permitAll()
                         .anyRequest().authenticated()
