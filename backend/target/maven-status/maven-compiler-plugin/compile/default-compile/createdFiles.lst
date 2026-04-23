@@ -1,4 +1,8 @@
 ron/com/projectmanager/Task.class
 ron/com/projectmanager/TestController.class
+ron/com/projectmanager/SecurityConfig.class
+ron/com/projectmanager/JwtUtil.class
 ron/com/projectmanager/TaskRepository.class
+ron/com/projectmanager/JwtFilter.class
 ron/com/projectmanager/ProjectmanagerApplication.class
+ron/com/projectmanager/AuthController.class

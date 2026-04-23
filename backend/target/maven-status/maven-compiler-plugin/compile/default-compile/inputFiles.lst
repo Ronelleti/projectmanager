@@ -1,4 +1,8 @@
+/Users/ron/IdeaProjects/ProjectManager/backend/src/main/java/ron/com/projectmanager/JwtFilter.java
+/Users/ron/IdeaProjects/ProjectManager/backend/src/main/java/ron/com/projectmanager/SecurityConfig.java
 /Users/ron/IdeaProjects/ProjectManager/backend/src/main/java/ron/com/projectmanager/TestController.java
 /Users/ron/IdeaProjects/ProjectManager/backend/src/main/java/ron/com/projectmanager/TaskRepository.java
 /Users/ron/IdeaProjects/ProjectManager/backend/src/main/java/ron/com/projectmanager/Task.java
+/Users/ron/IdeaProjects/ProjectManager/backend/src/main/java/ron/com/projectmanager/JwtUtil.java
+/Users/ron/IdeaProjects/ProjectManager/backend/src/main/java/ron/com/projectmanager/AuthController.java
 /Users/ron/IdeaProjects/ProjectManager/backend/src/main/java/ron/com/projectmanager/ProjectmanagerApplication.java
