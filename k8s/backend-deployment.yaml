@@ -15,6 +15,22 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ronn4/projectmanager:677438353d623b7c92bccfa04b4b35fd337499f0
+          image: ronn4/projectmanager:latest   # 🔥 keep latest (CI will update later)
           ports:
             - containerPort: 8080
+
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/projectmanager
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
