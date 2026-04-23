@@ -10,12 +10,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf().disable()
+                .csrf(csrf -> csrf.disable()) // ✅ NEW WAY
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/actuator/**"   // 🔥 allow actuator
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtFilter(), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(
+                        new JwtFilter(),
+                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class
+                )
                 .build();
     }
 }
