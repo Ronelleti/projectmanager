@@ -1,32 +1,52 @@
 package ron.com.projectmanager;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity // 🔥 CRITICAL
 public class Task {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String name;
-    private String assignedTo;
     private boolean completed;
+    private String assignedTo;
 
-    public Task() {}
+    // ✅ getters + setters
 
-    public Task(int id, String name) {
-        this.id = id;
-        this.name = name;
-        this.completed = false;
+    public int getId() {
+        return id;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getName() {
+        return name;
+    }
 
-    public String getAssignedTo() { return assignedTo; }
-    public void setAssignedTo(String assignedTo) { this.assignedTo = assignedTo; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public boolean isCompleted() { return completed; }
-    public void setCompleted(boolean completed) { this.completed = completed; }
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public String getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo = assignedTo;
+    }
 }
