@@ -4,7 +4,8 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
 
-  const API = "http://ron.project.devops";
+  // 🔥 FIX: use relative API path
+  const API = "/api";
 
   const fetchTasks = async () => {
     const res = await fetch(`${API}/tasks`);

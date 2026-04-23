@@ -1,5 +1,6 @@
 permissions:
   contents: write
+  packages: write
 
 name: Build and Deploy
 
@@ -13,22 +14,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repo
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      # 2. Setup Java
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build JAR
+      # 3. Build backend JAR
+      - name: Build backend JAR
+        working-directory: backend
         run: ./mvnw clean package
 
+      # 4. Build Docker image (from backend folder)
       - name: Build Docker image
+        working-directory: backend
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/projectmanager:${{ github.sha }} .
 
-      # 🔐 NOW scan AFTER build
+      # 5. Scan image
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
@@ -37,20 +44,24 @@ jobs:
           exit-code: '0'
           ignore-unfixed: true
 
+      # 6. Login to Docker Hub
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+      # 7. Push image
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/projectmanager:${{ github.sha }}
 
-      - name: Update backend-deployment.yaml image
+      # 8. Update K8s deployment (FIXED PATH)
+      - name: Update backend deployment image
         run: |
-          sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/projectmanager:${{ github.sha }}|g" argocd/deployment.yaml
+          sed -i "s|image: .*projectmanager.*|image: ${{ secrets.DOCKER_USERNAME }}/projectmanager:${{ github.sha }}|g" k8s/backend-deployment.yaml
 
+      # 9. Commit & push change
       - name: Commit and push updated YAML
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add argocd/deployment.yaml
-          git diff --cached --quiet || git commit -m "update image to ${{ github.sha }}"
+          git add k8s/backend-deployment.yaml
+          git diff --cached --quiet || git commit -m "update backend image to ${{ github.sha }}"
           git push
