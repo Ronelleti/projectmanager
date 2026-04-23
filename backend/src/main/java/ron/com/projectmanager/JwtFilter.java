@@ -15,6 +15,14 @@ public class JwtFilter extends GenericFilter {
             throws IOException, ServletException {
 
         HttpServletRequest req = (HttpServletRequest) request;
+        String path = req.getRequestURI();
+
+        // ✅ Allow login without token
+        if (path.contains("/api/auth/login")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String header = req.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
@@ -23,7 +31,6 @@ public class JwtFilter extends GenericFilter {
             try {
                 String username = JwtUtil.validateToken(token);
 
-                // 🔥 THIS IS THE MISSING PART
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 username,
@@ -37,7 +44,7 @@ public class JwtFilter extends GenericFilter {
                 ((HttpServletResponse) response).sendError(401, "Invalid token");
                 return;
             }
-        } else if (!req.getRequestURI().contains("/auth/login")) {
+        } else {
             ((HttpServletResponse) response).sendError(401, "Missing token");
             return;
         }
