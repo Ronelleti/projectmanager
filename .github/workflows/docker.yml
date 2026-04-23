@@ -43,7 +43,7 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/projectmanager:${{ github.sha }}
 
-      - name: Update deployment.yaml image
+      - name: Update backend-deployment.yaml image
         run: |
           sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/projectmanager:${{ github.sha }}|g" argocd/deployment.yaml
 
