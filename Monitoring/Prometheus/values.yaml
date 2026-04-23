@@ -1,0 +1,13 @@
+server:
+  persistentVolume:
+    enabled: true
+    size: 10Gi
+
+  service:
+    type: ClusterIP
+
+  extraScrapeConfigs: |
+    - job_name: 'backend'
+      metrics_path: /actuator/prometheus
+      static_configs:
+        - targets: ['backend.frontend.svc.cluster.local:8080']
