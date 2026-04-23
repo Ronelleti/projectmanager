@@ -4,8 +4,7 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
 
-  // 🔥 FIX: use relative API path
-  const API = "/api";
+  const API = "http://ron.project.devops/api";
 
   const fetchTasks = async () => {
     const res = await fetch(`${API}/tasks`);
@@ -29,7 +28,7 @@ function App() {
     });
 
     setNewTask("");
-    fetchTasks();
+    await fetchTasks(); // 🔥 IMPORTANT
   };
 
   const deleteTask = async (id) => {
@@ -37,7 +36,7 @@ function App() {
       method: "DELETE",
     });
 
-    fetchTasks();
+    await fetchTasks(); // 🔥 IMPORTANT
   };
 
   const completeTask = async (id) => {
@@ -45,7 +44,7 @@ function App() {
       method: "POST",
     });
 
-    fetchTasks();
+    await fetchTasks(); // 🔥 IMPORTANT
   };
 
   const assignTask = async (id) => {
@@ -60,7 +59,7 @@ function App() {
       body: JSON.stringify({ assignedTo: user }),
     });
 
-    fetchTasks();
+    await fetchTasks(); // 🔥 IMPORTANT
   };
 
   return (
