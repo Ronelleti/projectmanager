@@ -1,11 +1,8 @@
 package ron.com.projectmanager;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
 
-@Entity // 🔥 CRITICAL
+@Entity
 public class Task {
 
     @Id
@@ -16,37 +13,23 @@ public class Task {
     private boolean completed;
     private String assignedTo;
 
-    // ✅ getters + setters
+    // 🔥 ADD THIS
+    private String priority;
 
-    public int getId() {
-        return id;
-    }
+    // getters + setters
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public boolean isCompleted() { return completed; }
+    public void setCompleted(boolean completed) { this.completed = completed; }
 
-    public boolean isCompleted() {
-        return completed;
-    }
+    public String getAssignedTo() { return assignedTo; }
+    public void setAssignedTo(String assignedTo) { this.assignedTo = assignedTo; }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
-
-    public String getAssignedTo() {
-        return assignedTo;
-    }
-
-    public void setAssignedTo(String assignedTo) {
-        this.assignedTo = assignedTo;
-    }
+    public String getPriority() { return priority; }
+    public void setPriority(String priority) { this.priority = priority; }
 }
