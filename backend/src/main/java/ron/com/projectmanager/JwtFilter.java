@@ -2,7 +2,11 @@ package ron.com.projectmanager;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.io.IOException;
+import java.util.Collections;
 
 public class JwtFilter extends GenericFilter {
 
@@ -17,7 +21,18 @@ public class JwtFilter extends GenericFilter {
             String token = header.substring(7);
 
             try {
-                JwtUtil.validateToken(token);
+                String username = JwtUtil.validateToken(token);
+
+                // 🔥 THIS IS THE MISSING PART
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(
+                                username,
+                                null,
+                                Collections.emptyList()
+                        );
+
+                SecurityContextHolder.getContext().setAuthentication(auth);
+
             } catch (Exception e) {
                 ((HttpServletResponse) response).sendError(401, "Invalid token");
                 return;
