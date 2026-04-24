@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+  namespace: frontend
+spec:
+  schedule: "*/5 * * * *"   # every 5 minutes (for testing)
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: backup
+              image: postgres:15
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: POSTGRES_PASSWORD
+
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  pg_dump -h postgres -U postgres projectmanager > /backup/backup.sql
+
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /backup
+
+          restartPolicy: OnFailure
+
+          volumes:
+            - name: backup-storage
+              emptyDir: {}
