@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ronn4/projectmanager-frontend:b95316cb71414cc7e5d22534d2a180313bd5e60d
+          image: ronn4/projectmanager-frontend:6aa87a88b339abb95b7b8b240335585f0cae0648
           imagePullPolicy: Always
           ports:
             - containerPort: 80
