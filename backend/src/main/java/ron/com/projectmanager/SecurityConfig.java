@@ -3,6 +3,7 @@ package ron.com.projectmanager;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
@@ -10,12 +11,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable()) // ✅ NEW WAY
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/actuator/**"   // 🔥 allow actuator
-                        ).permitAll()
+
+                        // ✅ public endpoints
+                        .requestMatchers("/api/auth/**", "/actuator/**").permitAll()
+
+                        // 👇 READ allowed for USER + ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/tasks/**")
+                        .hasAnyRole("USER", "ADMIN")
+
+                        // 👇 WRITE only ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/tasks/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/tasks/**")
+                        .hasRole("ADMIN")
+
+                        // fallback
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(
@@ -23,14 +36,6 @@ public class SecurityConfig {
                         org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class
                 )
                 .build();
-    }
-
-    // ✅ ADD THIS
-    @Bean
-    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
-        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
-
-
     }
 
 
