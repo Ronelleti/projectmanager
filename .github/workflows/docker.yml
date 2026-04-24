@@ -55,7 +55,7 @@ jobs:
       # 8. Update K8s deployment (FIXED PATH)
       - name: Update backend deployment image
         run: |
-          sed -i "s|ronn4/projectmanager:.*|ronn4/projectmanager:${{ github.sha }}|g" k8s/backend-deployment.yaml
+          sed -i "s|${{ secrets.DOCKER_USERNAME }}/projectmanager:.*|${{ secrets.DOCKER_USERNAME }}/projectmanager:${{ github.sha }}|g" k8s/backend-deployment.yaml
 
       # 9. Commit & push change
       - name: Commit and push updated YAML
@@ -64,4 +64,38 @@ jobs:
           git config user.email "actions@github.com"
           git add k8s/backend-deployment.yaml
           git diff --cached --quiet || git commit -m "update backend image to ${{ github.sha }}"
+          git push
+
+  frontend:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      # Build frontend image
+      - name: Build frontend image
+        working-directory: frontend
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/projectmanager-frontend:${{ github.sha }} .
+
+      # Push frontend image
+      - name: Push frontend image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/projectmanager-frontend:${{ github.sha }}
+
+      # Update frontend deployment YAML
+      - name: Update frontend deployment image
+        run: |
+          sed -i "s|${{ secrets.DOCKER_USERNAME }}/projectmanager-frontend:.*|${{ secrets.DOCKER_USERNAME }}/projectmanager-frontend:${{ github.sha }}|g" k8s/frontend-deployment.yaml
+
+      # Commit & push
+      - name: Commit and push updated YAML
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add k8s/frontend-deployment.yaml
+          git diff --cached --quiet || git commit -m "update frontend image to ${{ github.sha }}"
           git push
