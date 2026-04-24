@@ -3,15 +3,14 @@ kind: Ingress
 metadata:
   name: app-ingress
   namespace: frontend
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt"   # 🔐 enable cert-manager
+
 spec:
-  ingressClassName: nginx
+  ingressClassName: nginx   # ✅ REQUIRED
 
   tls:
     - hosts:
         - ron.project.devops
-      secretName: tls-secret   # 🔐 cert will be stored here
+      secretName: tls-secret
 
   rules:
     - host: ron.project.devops
