@@ -16,14 +16,10 @@ spec:
       containers:
         - name: backend
           image: ronn4/projectmanager:PLACEHOLDER
-          imagePullPolicy: Always
           ports:
             - containerPort: 8080
 
           env:
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://postgres:5432/projectmanager
-
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
