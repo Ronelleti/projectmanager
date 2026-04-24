@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ronn4/projectmanager:a714b06676321a222f26274f22cfcd89e909c32a
+          image: ronn4/projectmanager:c306c07ea2eb37c61e4e550bc420ad7555220c8a
           ports:
             - containerPort: 8080
 
