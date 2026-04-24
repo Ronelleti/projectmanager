@@ -27,3 +27,22 @@ curl -X DELETE http://ron.project.devops/api/tasks/1 \
 -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyb24yIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NzY5OTEwMjQsImV4cCI6MTc3NzA3NzQyNH0.ofeyVPWME3H7-s-09Q-A9g5fkI54QUYDz0jF5APP-gc"
 
 kubectl logs -n frontend -l app=backend -f
+
+
+
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            failureThreshold: 3
