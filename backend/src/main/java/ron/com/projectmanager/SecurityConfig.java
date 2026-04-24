@@ -17,16 +17,13 @@ public class SecurityConfig {
                         // ✅ public endpoints
                         .requestMatchers("/api/auth/**", "/actuator/**").permitAll()
 
-                        // 👇 READ allowed for USER + ADMIN
+                        // 🔴 ADMIN only (PUT FIRST!)
+                        .requestMatchers(HttpMethod.POST, "/api/tasks/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/tasks/**").hasRole("ADMIN")
+
+                        // 🟢 USER + ADMIN (read only)
                         .requestMatchers(HttpMethod.GET, "/api/tasks/**")
                         .hasAnyRole("USER", "ADMIN")
-
-                        // 👇 WRITE only ADMIN
-                        .requestMatchers(HttpMethod.POST, "/api/tasks/**")
-                        .hasRole("ADMIN")
-
-                        .requestMatchers(HttpMethod.DELETE, "/api/tasks/**")
-                        .hasRole("ADMIN")
 
                         // fallback
                         .anyRequest().authenticated()
