@@ -2,9 +2,11 @@ ron/com/projectmanager/Task.class
 ron/com/projectmanager/AppConfig.class
 ron/com/projectmanager/UserRepository.class
 ron/com/projectmanager/SecurityConfig.class
+ron/com/projectmanager/RateLimitFilter.class
 ron/com/projectmanager/TaskRepository.class
 ron/com/projectmanager/JwtFilter.class
 ron/com/projectmanager/ProjectmanagerApplication.class
+ron/com/projectmanager/CorsConfig.class
 ron/com/projectmanager/DataLoader.class
 ron/com/projectmanager/AuthController.class
 ron/com/projectmanager/Role.class
