@@ -30,11 +30,23 @@ export async function login(username, password) {
 
 // 📥 TASKS
 export async function fetchTasks() {
+    const token = getToken();
+
     const res = await fetch(`${API}/tasks`, {
-        headers: { Authorization: `Bearer ${getToken()}` }
+        headers: token
+            ? { Authorization: `Bearer ${token}` }
+            : {}
     });
 
-    if (res.status === 401) logout();
+    if (res.status === 401) {
+        // token invalid or missing → force logout
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "/";
+        return [];
+    }
+
+    if (!res.ok) throw new Error("Failed to fetch tasks");
 
     return res.json();
 }

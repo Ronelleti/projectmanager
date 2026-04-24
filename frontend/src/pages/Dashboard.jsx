@@ -20,7 +20,7 @@ import {
 
 export default function Dashboard() {
     const [tasks, setTasks] = useState([]);
-    const [token] = useState(localStorage.getItem("token"));
+    const token = localStorage.getItem("token");
     const [role] = useState(localStorage.getItem("role"));
     const [newTask, setNewTask] = useState("");
 
