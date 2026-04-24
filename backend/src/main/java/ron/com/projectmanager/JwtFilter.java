@@ -20,10 +20,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String path = req.getRequestURI();
 
-        // 🔥 DEBUG (optional - you can remove later)
         System.out.println("Request path: " + path);
 
-        // ✅ ALLOW ALL AUTH + ACTUATOR ENDPOINTS
         if (path.startsWith("/api/auth") || path.startsWith("/actuator")) {
             chain.doFilter(req, res);
             return;
@@ -51,6 +49,10 @@ public class JwtFilter extends OncePerRequestFilter {
                     );
 
             SecurityContextHolder.getContext().setAuthentication(auth);
+
+            // ✅ DEBUG INSIDE TRY
+            System.out.println("ROLE FROM TOKEN: " + role);
+            System.out.println("AUTH SET: " + auth);
 
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
