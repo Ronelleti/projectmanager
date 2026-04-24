@@ -1,6 +1,7 @@
 package ron.com.projectmanager;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -11,7 +12,6 @@ public class TestController {
 
     private final TaskRepository taskRepository;
 
-    // 🔥 Inject repository
     public TestController(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
@@ -22,34 +22,38 @@ public class TestController {
         return "Project Manager API is running 🚀";
     }
 
-    // GET all tasks
+    // 🟢 READ (USER + ADMIN)
     @GetMapping("/tasks")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public List<Task> getTasks() {
         return taskRepository.findAll();
     }
 
-    // GET one task
     @GetMapping("/tasks/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Task getTask(@PathVariable int id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
     }
 
-    // CREATE
+    // 🔴 CREATE (ADMIN ONLY)
     @PostMapping("/tasks")
+    @PreAuthorize("hasRole('ADMIN')")
     public Task addTask(@RequestBody Task task) {
         return taskRepository.save(task);
     }
 
-    // DELETE
+    // 🔴 DELETE (ADMIN ONLY)
     @DeleteMapping("/tasks/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String deleteTask(@PathVariable int id) {
         taskRepository.deleteById(id);
         return "Task deleted";
     }
 
-    // UPDATE
+    // 🔴 UPDATE (ADMIN ONLY)
     @PutMapping("/tasks/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Task updateTask(@PathVariable int id, @RequestBody Task updatedTask) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
@@ -58,8 +62,9 @@ public class TestController {
         return taskRepository.save(task);
     }
 
-    // ASSIGN
+    // 🔴 ASSIGN (ADMIN ONLY)
     @PostMapping("/tasks/{id}/assign")
+    @PreAuthorize("hasRole('ADMIN')")
     public Task assignTask(@PathVariable int id, @RequestBody Task updatedTask) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
@@ -68,8 +73,9 @@ public class TestController {
         return taskRepository.save(task);
     }
 
-    // COMPLETE
+    // 🔴 COMPLETE (ADMIN ONLY)
     @PostMapping("/tasks/{id}/complete")
+    @PreAuthorize("hasRole('ADMIN')")
     public Task completeTask(@PathVariable int id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
