@@ -57,7 +57,7 @@ jobs:
       # 8. Update K8s deployment (FIXED PATH)
       - name: Update backend deployment image
         run: |
-          sed -i "s|ronn4/projectmanager:.*|ronn4/projectmanager:${{ github.sha }}|g" k8s/backend-deployment.yaml
+          sed -i "s|image: ronn4/projectmanager:.*|image: ronn4/projectmanager:${{ github.sha }}|g" k8s/backend-deployment.yaml
 
       # 9. Commit & push change
       - name: Commit and push updated YAML
@@ -93,7 +93,7 @@ jobs:
       # Update frontend deployment YAML
       - name: Update frontend deployment image
         run: |
-          sed -i "s|ronn4/projectmanager-frontend:.*|ronn4/projectmanager-frontend:${{ github.sha }}|g" k8s/frontend-deployment.yaml
+          sed -i "s|image: ronn4/projectmanager-frontend:.*|image: ronn4/projectmanager-frontend:${{ github.sha }}|g" k8s/frontend-deployment.yaml
 
       # Commit & push
       - name: Commit and push updated YAML
