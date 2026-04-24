@@ -1,0 +1,29 @@
+to run react - npm run / npm run build
+
+minikube start / minikube tunnel
+
+argocd - kubectl port-forward svc/argocd-server -n argocd 8081:443
+
+postgress local - kubectl port-forward svc/postgres 5432:5432 -n frontend
+
+to find what is catching the port - lsof -i :"3000" / kill -9 "pin"
+
+* start docker first
+
+
+
+
+
+
+
+
+
+
+curl -X POST http://ron.project.devops/api/auth/login \
+-H "Content-Type: application/json" \
+-d '{"username":"ron3","password":"1234"}'
+
+curl -X DELETE http://ron.project.devops/api/tasks/1 \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyb24yIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NzY5OTEwMjQsImV4cCI6MTc3NzA3NzQyNH0.ofeyVPWME3H7-s-09Q-A9g5fkI54QUYDz0jF5APP-gc"
+
+kubectl logs -n frontend -l app=backend -f
