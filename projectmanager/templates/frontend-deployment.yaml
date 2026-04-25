@@ -4,18 +4,22 @@ metadata:
   name: frontend
   namespace: frontend
 spec:
-  replicas: 1
+  replicas: {{ .Values.frontend.replicas }}
+
   selector:
     matchLabels:
       app: frontend
+
   template:
     metadata:
       labels:
         app: frontend
+
     spec:
       containers:
         - name: frontend
-          image: ronn4/projectmanager-frontend:47b8997bc67adc267c1c3f1cdb2ab9b3aa13ba23
-          imagePullPolicy: Always
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+
           ports:
-            - containerPort: 80
+            - containerPort: {{ .Values.service.frontend.port }}
