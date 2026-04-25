@@ -5,29 +5,29 @@ metadata:
   namespace: frontend
 
 spec:
-  ingressClassName: nginx   # ✅ REQUIRED
+  ingressClassName: {{ .Values.ingress.className }}
 
   tls:
     - hosts:
-        - ron.project.devops
-      secretName: tls-secret
+        - {{ .Values.ingress.host }}
+      secretName: {{ .Values.ingress.tls.secretName }}
 
   rules:
-    - host: ron.project.devops
+    - host: {{ .Values.ingress.host }}
       http:
         paths:
-          - path: /
+          - path: {{ .Values.ingress.paths.frontend }}
             pathType: Prefix
             backend:
               service:
                 name: frontend
                 port:
-                  number: 80
+                  number: {{ .Values.service.frontend.port }}
 
-          - path: /api
+          - path: {{ .Values.ingress.paths.backend }}
             pathType: Prefix
             backend:
               service:
                 name: backend
                 port:
-                  number: 8080
+                  number: {{ .Values.service.backend.port }}

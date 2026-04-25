@@ -1,22 +1,33 @@
-backend:
-  replicas: 2
-  image:
-    repository: ronn4/projectmanager
-    tag: latest
-    pullPolicy: Always
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: frontend
 
-frontend:
-  replicas: 1
-  image:
-    repository: ronn4/projectmanager-frontend
-    tag: latest
-    pullPolicy: Always
+spec:
+  ingressClassName: nginx
 
-service:
-  backend:
-    port: 8080
-  frontend:
-    port: 80
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host }}
+      secretName: tls-secret
 
-ingress:
-  host: ron.project.devops
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: {{ .Values.service.frontend.port }}
+
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ .Values.service.backend.port }}
