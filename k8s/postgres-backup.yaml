@@ -33,5 +33,4 @@ spec:
 
           volumes:
             - name: backup-storage
-              persistentVolumeClaim:
-                claimName: backup-pvc
+              emptyDir: {}
