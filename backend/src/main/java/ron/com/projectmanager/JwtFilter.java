@@ -22,7 +22,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         System.out.println("Request path: " + path);
 
-        if (path.startsWith("/api/auth") || path.startsWith("/actuator")) {
+        // 🔥 IMPORTANT: allow actuator + auth endpoints without JWT
+        if (path.contains("/actuator") || path.startsWith("/api/auth")) {
             chain.doFilter(req, res);
             return;
         }
@@ -50,7 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(auth);
 
-            // ✅ DEBUG INSIDE TRY
+            // Debug logs
             System.out.println("ROLE FROM TOKEN: " + role);
             System.out.println("AUTH SET: " + auth);
 
