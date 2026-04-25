@@ -22,6 +22,8 @@ spec:
         app: backend
 
     spec:
+      serviceAccountName: backend-sa   # ✅ ADD THIS LINE HERE
+
       terminationGracePeriodSeconds: 30
 
       containers:
