@@ -2,14 +2,14 @@ backend:
   replicas: 2
   image:
     repository: ronn4/projectmanager
-    tag: 35f806dad84e8bb00d53581f6d161f245ca13027
+    tag: a3ea2c775ed466c162697efc8a65dfb9fddcf003
     pullPolicy: Always
 
 frontend:
   replicas: 1
   image:
     repository: ronn4/projectmanager-frontend
-    tag: 35f806dad84e8bb00d53581f6d161f245ca13027
+    tag: a3ea2c775ed466c162697efc8a65dfb9fddcf003
     pullPolicy: Always
 
 service:
