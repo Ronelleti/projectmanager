@@ -11,7 +11,7 @@ to find what is catching the port - lsof -i :"3000" / kill -9 "pin"
 * start docker first
 
 
-
+minikube start --memory=7800 --cpus=4
 
 
 
