@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - main
+      - dev
 
 jobs:
   build:
@@ -27,6 +28,19 @@ jobs:
       # -----------------------
       - name: Set tag
         run: echo "TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+
+      # -----------------------
+      # SET ENV (dev / prod)
+      # -----------------------
+      - name: Set environment
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            echo "ENV=prod" >> $GITHUB_ENV
+            echo "VALUES_FILE=projectmanager/values-prod.yaml" >> $GITHUB_ENV
+          else
+            echo "ENV=dev" >> $GITHUB_ENV
+            echo "VALUES_FILE=projectmanager/values-dev.yaml" >> $GITHUB_ENV
+          fi
 
       # -----------------------
       # BACKEND BUILD
@@ -68,19 +82,25 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USERNAME }}/projectmanager-frontend:${TAG}
 
       # -----------------------
-      # UPDATE HELM VALUES (🔥 IMPORTANT)
+      # UPDATE HELM VALUES (ENV BASED)
       # -----------------------
-      - name: Update values.yaml with new image tag
+      - name: Update Helm values with new image tag
         run: |
-          sed -i "s|tag: .*|tag: ${TAG}|g" projectmanager/values.yaml
+          echo "Updating $VALUES_FILE for $ENV environment"
+
+          # Update backend image tag
+          sed -i "s|\(repository: .*/projectmanager\).*|\1\n    tag: ${TAG}|" $VALUES_FILE
+
+          # Update frontend image tag
+          sed -i "s|\(repository: .*/projectmanager-frontend\).*|\1\n    tag: ${TAG}|" $VALUES_FILE
 
       # -----------------------
       # COMMIT BACK TO GIT
       # -----------------------
-      - name: Commit and push updated values.yaml
+      - name: Commit and push updated values file
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add projectmanager/values.yaml
-          git diff --cached --quiet || git commit -m "update image tag to ${TAG}"
+          git add $VALUES_FILE
+          git diff --cached --quiet || git commit -m "update ${ENV} image tag to ${TAG}"
           git push

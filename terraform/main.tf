@@ -112,6 +112,10 @@ resource "kubernetes_manifest" "projectmanager_app" {
         repoURL        = var.repo_url
         targetRevision = "main"
         path           = "projectmanager"
+
+        helm = {
+          valueFiles = ["values-prod.yaml"]   # ✅ MUST be a list
+        }
       }
 
       destination = {
