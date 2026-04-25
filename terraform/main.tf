@@ -20,7 +20,7 @@ resource "kubernetes_namespace_v1" "frontend" {
   }
 }
 
-# Secret
+# Secret (✅ FIXED - no base64encode, no string_data)
 resource "kubernetes_secret_v1" "postgres" {
   metadata {
     name      = "postgres-secret"
@@ -28,8 +28,8 @@ resource "kubernetes_secret_v1" "postgres" {
   }
 
   data = {
-    POSTGRES_USER     = base64encode(var.postgres_user)
-    POSTGRES_PASSWORD = base64encode(var.postgres_password)
+    POSTGRES_USER     = var.postgres_user
+    POSTGRES_PASSWORD = var.postgres_password
   }
 
   type = "Opaque"
@@ -53,6 +53,7 @@ EOF
   ]
 }
 
+# RBAC - Service Account
 resource "kubernetes_service_account_v1" "backend" {
   metadata {
     name      = "backend-sa"
@@ -60,6 +61,7 @@ resource "kubernetes_service_account_v1" "backend" {
   }
 }
 
+# RBAC - Role
 resource "kubernetes_role_v1" "backend_role" {
   metadata {
     name      = "backend-role"
@@ -73,6 +75,7 @@ resource "kubernetes_role_v1" "backend_role" {
   }
 }
 
+# RBAC - Role Binding
 resource "kubernetes_role_binding_v1" "backend_binding" {
   metadata {
     name      = "backend-binding"
@@ -92,9 +95,63 @@ resource "kubernetes_role_binding_v1" "backend_binding" {
   }
 }
 
+resource "kubernetes_namespace_v1" "frontend_dev" {
+  metadata {
+    name = "frontend-dev"
+  }
+}
+
+resource "kubernetes_manifest" "projectmanager_dev_app" {
+  depends_on = [
+    helm_release.argocd,
+    kubernetes_secret_v1.postgres,
+    kubernetes_namespace_v1.frontend_dev
+  ]
+
+  manifest = {
+    apiVersion = "argoproj.io/v1alpha1"
+    kind       = "Application"
+
+    metadata = {
+      name      = "projectmanager-dev"
+      namespace = "argocd"
+    }
+
+    spec = {
+      project = "default"
+
+      source = {
+        repoURL        = var.repo_url
+        targetRevision = "main"
+        path           = "projectmanager"
+
+        helm = {
+          valueFiles = ["values-dev.yaml"]
+        }
+      }
+
+      destination = {
+        server    = "https://kubernetes.default.svc"
+        namespace = "frontend-dev"
+      }
+
+      syncPolicy = {
+        automated = {
+          prune    = true
+          selfHeal = true
+        }
+      }
+    }
+  }
+}
+
+
 # 🚀 ArgoCD Application
 resource "kubernetes_manifest" "projectmanager_app" {
-  depends_on = [helm_release.argocd]
+  depends_on = [
+    helm_release.argocd,
+    kubernetes_secret_v1.postgres
+  ]
 
   manifest = {
     apiVersion = "argoproj.io/v1alpha1"
@@ -114,7 +171,7 @@ resource "kubernetes_manifest" "projectmanager_app" {
         path           = "projectmanager"
 
         helm = {
-          valueFiles = ["values-prod.yaml"]   # ✅ MUST be a list
+          valueFiles = ["values-prod.yaml"]
         }
       }
 
