@@ -19,6 +19,18 @@ resource "kubernetes_namespace_v1" "frontend" {
     name = "frontend"
   }
 }
+resource "kubernetes_secret_v1" "postgres_dev" {
+  metadata {
+    name      = "postgres-secret"
+    namespace = "frontend-dev"
+  }
+  data = {
+    POSTGRES_USER     = var.postgres_user
+    POSTGRES_PASSWORD = var.postgres_password
+  }
+
+  type = "Opaque"
+}
 
 # Secret (✅ FIXED - no base64encode, no string_data)
 resource "kubernetes_secret_v1" "postgres" {

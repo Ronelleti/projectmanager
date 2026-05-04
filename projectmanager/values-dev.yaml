@@ -1,0 +1,22 @@
+backend:
+  replicas: 1
+  image:
+    repository: ronn4/projectmanager
+    tag: latest
+    pullPolicy: Always
+
+frontend:
+  replicas: 1
+  image:
+    repository: ronn4/projectmanager-frontend
+    tag: latest
+    pullPolicy: Always
+
+service:
+  backend:
+    port: 8080
+  frontend:
+    port: 80
+
+ingress:
+  host: dev.ron.project.devops
