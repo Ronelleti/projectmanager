@@ -156,7 +156,7 @@ public class TestController {
 FROM eclipse-temurin:17-jdk-jammy
 
 WORKDIR /app
-COPY backend/target/projectmanager-0.0.1-SNAPSHOT.jar app.jar
+COPY ../backend/target/projectmanager-0.0.1-SNAPSHOT.jar app.jar
 
 RUN useradd -m appuser
 USER appuser

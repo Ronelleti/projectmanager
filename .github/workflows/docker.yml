@@ -88,11 +88,11 @@ jobs:
         run: |
           echo "Updating $VALUES_FILE for $ENV environment"
 
-          # Update backend image tag
-          sed -i "s|\(repository: .*/projectmanager\).*|\1\n    tag: ${TAG}|" $VALUES_FILE
+          # Update backend tag ONLY
+          sed -i '/backend:/,/tag:/ s/tag:.*/tag: '"${TAG}"'/' $VALUES_FILE
 
-          # Update frontend image tag
-          sed -i "s|\(repository: .*/projectmanager-frontend\).*|\1\n    tag: ${TAG}|" $VALUES_FILE
+          # Update frontend tag ONLY
+          sed -i '/frontend:/,/tag:/ s/tag:.*/tag: '"${TAG}"'/' $VALUES_FILE
 
       # -----------------------
       # COMMIT BACK TO GIT
