@@ -41,6 +41,10 @@ spec:
               memory: "512Mi"
 
           env:
+
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-postgresql:5432/projectmanager
+
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
