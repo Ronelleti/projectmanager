@@ -2,15 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: app-ingress
-  namespace: frontend
-
 spec:
   ingressClassName: nginx
-
-  tls:
-    - hosts:
-        - {{ .Values.ingress.host }}
-      secretName: {{ .Values.ingress.tls.secretName }}
 
   rules:
     - host: {{ .Values.ingress.host }}

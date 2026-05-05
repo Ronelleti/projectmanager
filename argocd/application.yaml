@@ -6,11 +6,17 @@ metadata:
 spec:
   destination:
     server: https://kubernetes.default.svc
-    namespace: frontend   # 🔥 FIXED
+    namespace: frontend
+
   source:
-    repoURL: https://github.com/Ronelleti/projectmanager.git   # 🔥 FIXED
-    targetRevision: HEAD
+    repoURL: https://github.com/Ronelleti/projectmanager.git
+    targetRevision: vm   # ✅ FIXED (your branch)
     path: projectmanager
+
+    helm:
+      valueFiles:
+        - values-dev.yaml   # ✅ THIS IS THE KEY FIX
+
   syncPolicy:
     automated:
       prune: true

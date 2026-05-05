@@ -2,9 +2,8 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: postgres-backup
-  namespace: frontend
 spec:
-  schedule: "*/5 * * * *"
+  schedule: "0 2 * * *"   # ✅ every day at 02:00
 
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
@@ -20,7 +19,7 @@ spec:
               image: postgres:15
 
               env:
-                - name: POSTGRES_USER   # ✅ ADD THIS
+                - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
                       name: postgres-secret
@@ -32,6 +31,9 @@ spec:
                       name: postgres-secret
                       key: POSTGRES_PASSWORD
 
+                - name: DB_NAME
+                  value: {{ .Values.database.name }}
+
               command:
                 - /bin/sh
                 - -c
@@ -40,12 +42,21 @@ spec:
 
                   echo "Starting backup..."
 
-                  pg_dump -h postgres -U $POSTGRES_USER projectmanager \
-                  > /backup/backup-$(date +%Y%m%d%H%M).sql
+                  FILE="/backup/backup-$(date +%Y%m%d%H%M).sql"
 
-                  echo "Backup completed"
+                  pg_dump -h postgres -U $POSTGRES_USER $DB_NAME > $FILE
 
-                  find /backup -type f -mtime +1 -delete
+                  if [ $? -eq 0 ]; then
+                    echo "Backup successful → cleaning old backups"
+
+                    # 🔥 keep ONLY latest file
+                    ls -t /backup/*.sql | tail -n +2 | xargs -r rm --
+
+                  else
+                    echo "Backup failed → NOT deleting old backups"
+                  fi
+
+                  echo "Done"
 
               volumeMounts:
                 - name: backup-storage
