@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: frontend
+  namespace: {{ .Values.backend.namespace }}
 spec:
   replicas: {{ .Values.backend.replicas }}
 
@@ -22,8 +22,7 @@ spec:
         app: backend
 
     spec:
-      serviceAccountName: backend-sa   # ✅ ADD THIS LINE HERE
-
+      serviceAccountName: backend-sa
       terminationGracePeriodSeconds: 30
 
       containers:
