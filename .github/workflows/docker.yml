@@ -81,18 +81,17 @@ jobs:
       - name: Push frontend image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/projectmanager-frontend:${TAG}
 
+
+      - name: Install yq
+        run : sudo snap install yq
+
       # -----------------------
       # UPDATE HELM VALUES (ENV BASED)
       # -----------------------
       - name: Update Helm values with new image tag
         run: |
-          echo "Updating $VALUES_FILE for $ENV environment"
-
-          # Update backend tag ONLY
-          sed -i '/backend:/,/tag:/ s/tag:.*/tag: '"${TAG}"'/' $VALUES_FILE
-
-          # Update frontend tag ONLY
-          sed -i '/frontend:/,/tag:/ s/tag:.*/tag: '"${TAG}"'/' $VALUES_FILE
+          yq -i '.backend.image.tag = env(TAG)' $VALUES_FILE
+          yq -i '.frontend.image.tag = env(TAG)' $VALUES_FILE
 
       # -----------------------
       # COMMIT BACK TO GIT

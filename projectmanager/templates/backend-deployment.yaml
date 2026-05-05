@@ -27,21 +27,12 @@ spec:
       containers:
         - name: backend
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
-          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          imagePullPolicy: { { .Values.backend.image.pullPolicy } }
 
           ports:
-            - containerPort: {{ .Values.service.backend.port }}
-
-          resources:
-            requests:
-              cpu: "200m"
-              memory: "256Mi"
-            limits:
-              cpu: "1"
-              memory: "512Mi"
+            - containerPort: { { .Values.service.backend.port } }
 
           env:
-
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres-postgresql:5432/projectmanager
 
@@ -56,3 +47,6 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
+
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: validate
