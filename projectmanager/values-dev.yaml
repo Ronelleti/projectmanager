@@ -1,18 +1,16 @@
 backend:
-  namespace: backend
   replicas: 1
   image:
     repository: ronn4/projectmanager
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always   # 🔥 ADD THIS
 
 frontend:
-  namespace: frontend
   replicas: 1
   image:
     repository: ronn4/projectmanager-frontend
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always   # 🔥 ADD THIS
 
 service:
   backend:
@@ -22,12 +20,6 @@ service:
 
 ingress:
   host: dev.ron.project.devops
-
-certManager:
-  enabled: false
-
-sealedSecrets:
-  enabled: false
 
 database:
   name: projectmanager
