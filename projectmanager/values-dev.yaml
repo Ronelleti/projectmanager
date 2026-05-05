@@ -28,3 +28,6 @@ certManager:
 
 sealedSecrets:
   enabled: false
+
+database:
+  name: projectmanager
