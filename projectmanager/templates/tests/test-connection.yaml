@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "projectmanager.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "projectmanager.fullname" . }}:{{ .Values.service.frontend.port }}']
   restartPolicy: Never
